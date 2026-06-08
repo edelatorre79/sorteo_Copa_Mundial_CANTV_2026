@@ -667,9 +667,11 @@ function exportResults(){
   const dateOrder=['Jun 11','Jun 12','Jun 13','Jun 14','Jun 15','Jun 16','Jun 17',
     'Jun 18','Jun 19','Jun 20','Jun 21','Jun 22','Jun 23','Jun 24','Jun 25','Jun 26','Jun 27'];
 
-  // Build a map: dateStr → list of {player, tier, team, rival, rivalPlayer, venue, round}
+  // Build a map: dateStr -> list of match entries, ONE per real match (no duplicates).
+  // Canonical key = sorted pair of team names so A-vs-B and B-vs-A map to the same key.
   const byDate={};
   dateOrder.forEach(d=>{byDate[d]=[];});
+  const seen=new Set();
 
   for(const p of sorteo){
     const tiers=[
@@ -680,6 +682,10 @@ function exportResults(){
     for(const t of tiers){
       const ms=SCHEDULE[t.sel.nombre]||[];
       ms.forEach((m,ri)=>{
+        const pair=[t.sel.nombre,m.r].sort();
+        const key=m.d+'|'+pair[0]+'|'+pair[1];
+        if(seen.has(key))return;
+        seen.add(key);
         if(!byDate[m.d])byDate[m.d]=[];
         const rp=getRivalPlayer(m.r);
         byDate[m.d].push({
