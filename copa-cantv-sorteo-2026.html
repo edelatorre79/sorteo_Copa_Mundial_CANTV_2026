@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a1628">
+<title>3ra Copa CANTV · FIFA World Cup 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700;800&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fifa-navy:   #0a1628;
+    --fifa-blue:   #1a3a6b;
+    --fifa-red:    #e61d25;
+    --fifa-gold:   #c9a84c;
+    --fifa-gold2:  #f0c040;
+    --fifa-white:  #f5f5f5;
+    --fifa-gray:   #8a9ab5;
+    --tier-a:      #c9a84c;
+    --tier-b:      #b0bec5;
+    --tier-c:      #a0522d;
+    --card-bg:     #0e1e35;
+    --card-border: rgba(201,168,76,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { background: var(--fifa-navy); min-height: 100vh; font-family: 'Barlow', sans-serif; overflow-x: hidden; }
+
+  /* ── PATTERN BG ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      repeating-linear-gradient(60deg, rgba(201,168,76,0.03) 0px, rgba(201,168,76,0.03) 1px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(-60deg, rgba(201,168,76,0.03) 0px, rgba(201,168,76,0.03) 1px, transparent 1px, transparent 40px);
+  }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative; z-index: 1;
+    background: linear-gradient(160deg, #0d1e3a 0%, #071020 60%, #12081a 100%);
+    border-bottom: 2px solid var(--fifa-gold);
+    padding: 0;
+    overflow: hidden;
+  }
+  #hero::after {
+    content: '';
+    position: absolute; bottom: -1px; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--fifa-red), var(--fifa-gold), var(--fifa-blue), var(--fifa-gold), var(--fifa-red));
+  }
+  .hero-inner {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 16px 20px;
+    text-align: center;
+  }
+
+  /* ── FIFA LOGO SVG ── */
+  .wc-logo-wrap { margin-bottom: 10px; }
+
+  /* ── MASCOTS ROW ── */
+  .mascots-row {
+    display: flex; gap: 0; justify-content: center; align-items: flex-end;
+    margin: 8px 0 4px;
+  }
+  .mascot { width: 64px; flex-shrink: 0; }
+
+  /* ── TITLE BLOCK ── */
+  .tournament-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(10px, 2.5vw, 13px);
+    letter-spacing: 4px;
+    color: var(--fifa-gold);
+    margin-bottom: 2px;
+  }
+  .copa-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(26px, 7vw, 44px);
+    color: #fff;
+    letter-spacing: 1px;
+    line-height: 1;
+    text-transform: uppercase;
+    text-shadow: 0 2px 20px rgba(201,168,76,0.3);
+  }
+  .copa-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(13px, 3.5vw, 18px);
+    color: var(--fifa-gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .we-are-26 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(11px, 3vw, 15px);
+    letter-spacing: 5px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 4px;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { width: 100%; max-width: 320px; margin: 14px auto 0; }
+  .progress-labels { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .progress-label { font-size: 11px; color: var(--fifa-gray); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .progress-count { font-size: 11px; color: var(--fifa-gold); font-weight: 800; }
+  .progress-bar { height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+  .progress-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--fifa-red), var(--fifa-gold));
+    transition: width 0.4s ease;
+  }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--fifa-gold), #d4870a);
+    color: #0a0a00; border: none; border-radius: 6px;
+    padding: 10px 22px; font-weight: 800; font-size: 13px;
+    cursor: pointer; font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    transition: opacity 0.2s, transform 0.1s;
+    box-shadow: 0 3px 12px rgba(201,168,76,0.35);
+  }
+  .btn-primary:disabled { opacity: 0.3; cursor: default; }
+  .btn-primary:not(:disabled):active { transform: scale(0.97); }
+  .btn-secondary {
+    background: transparent; color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 6px; padding: 10px 22px;
+    font-weight: 700; font-size: 13px; cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    transition: border-color 0.2s, transform 0.1s;
+  }
+  .btn-secondary:active { transform: scale(0.97); border-color: var(--fifa-gold); }
+  .valid-note { font-size: 10px; color: #4caf50; margin-top: 6px; letter-spacing: 0.5px; }
+
+  /* ── LEGEND ── */
+  #legend {
+    position: relative; z-index: 1;
+    display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.25);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+  .legend-text { font-size: 10.5px; color: rgba(255,255,255,0.5); }
+
+  /* ── GRID ── */
+  #grid {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 12px;
+    padding: 16px 14px;
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px; overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    -webkit-user-select: none; user-select: none;
+  }
+  .card.revealed { cursor: default; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.5); }
+  .card:not(.revealed):active { transform: scale(0.98); }
+
+  .card-header {
+    background: linear-gradient(90deg, #112244, #162a4a);
+    padding: 10px 13px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+  }
+  .card-num-wrap { display: flex; align-items: center; gap: 9px; }
+  .card-num {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--fifa-gold), #d4870a);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 13px; color: #0a0a00;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .card-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800; font-size: 15px; color: #fff;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .card-user { font-size: 10px; color: rgba(255,255,255,0.35); font-family: monospace; }
+  .plat-badge {
+    font-size: 9px; font-weight: 700; padding: 2px 6px;
+    border-radius: 3px; font-family: monospace;
+    letter-spacing: 0.3px; white-space: nowrap;
+  }
+  .plat-ps5   { background: #003087; color: #fff; }
+  .plat-xbox  { background: #107C10; color: #fff; }
+  .plat-pc    { background: #2a2a2a; color: #fff; }
+
+  .card-body { padding: 11px 13px; }
+
+  /* hidden state */
+  .card-hidden {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 6px; padding: 14px 0;
+  }
+  .card-hidden-icon { font-size: 26px; }
+  .card-hidden-text {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+  }
+
+  /* selections */
+  .sel-list { display: flex; flex-direction: column; gap: 7px; }
+  .sel-row {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.025);
+    border-radius: 7px; padding: 7px 9px;
+    border-left: 3px solid transparent;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .sel-row.tier-a { border-left: 3px solid var(--tier-a); }
+  .sel-row.tier-b { border-left: 3px solid var(--tier-b); }
+  .sel-row.tier-c { border-left: 3px solid var(--tier-c); }
+
+  .sel-badge {
+    font-size: 8px; font-weight: 800; padding: 2px 5px;
+    border-radius: 3px; font-family: monospace;
+    letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0;
+  }
+  .badge-a { background: var(--tier-a); color: #0a0800; }
+  .badge-b { background: var(--tier-b); color: #111; }
+  .badge-c { background: var(--tier-c); color: #fff; }
+
+  .sel-info { flex: 1; min-width: 0; }
+  .sel-name {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 13px; color: #fff;
+  }
+  .sel-detail {
+    font-size: 10px; color: rgba(255,255,255,0.35);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* ── SUMMARY TABLE ── */
+  #summary {
+    position: relative; z-index: 1;
+    max-width: 920px; margin: 6px auto 20px; padding: 0 14px;
+    display: none;
+  }
+  #summary.show { display: block; }
+  .summary-box {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .summary-header {
+    background: linear-gradient(90deg, #112244, #162a4a);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+  }
+  .summary-header span { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: #fff; letter-spacing: 1px; }
+  table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  th {
+    color: var(--fifa-gold); padding: 8px 12px; text-align: left;
+    font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.5px;
+    font-size: 12px; text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    white-space: nowrap; background: rgba(255,255,255,0.02);
+  }
+  td { padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.025); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) { background: rgba(255,255,255,0.01); }
+  .td-num { color: rgba(201,168,76,0.6); font-weight: 700; font-family: monospace; }
+  .td-name { color: #fff; font-weight: 700; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; }
+  .td-user { color: rgba(255,255,255,0.25); font-size: 9px; font-family: monospace; display: block; }
+  .td-sel-a { color: var(--tier-a); font-weight: 600; }
+  .td-sel-b { color: var(--tier-b); font-weight: 600; }
+  .td-sel-c { color: var(--tier-c); font-weight: 600; }
+  .td-grp { font-size: 9px; opacity: 0.45; margin-left: 3px; }
+
+  /* ── HOST STRIP ── */
+  .host-strip {
+    position: relative; z-index: 1;
+    display: flex; justify-content: center; gap: 0;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding: 10px 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    color: rgba(255,255,255,0.2);
+  }
+  .host-strip span { padding: 0 12px; border-right: 1px solid rgba(255,255,255,0.08); }
+  .host-strip span:last-child { border-right: none; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+  .sel-list { animation: fadeIn 0.3s ease; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinning { animation: spin 0.5s ease; }
+
+  /* ── SCROLL ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--fifa-navy); }
+  ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<div id="hero">
+  <div class="hero-inner">
+
+    <!-- FIFA WC 2026 Logo SVG -->
+    <div class="wc-logo-wrap">
+      <svg width="180" height="90" viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg">
+        <!-- "26" stylized behind trophy -->
+        <text x="28" y="155" font-family="Barlow Condensed,sans-serif" font-weight="900" font-size="148" fill="rgba(255,255,255,0.07)" letter-spacing="-4">26</text>
+        <!-- Trophy silhouette (simplified) -->
+        <g transform="translate(147,14)">
+          <!-- base -->
+          <rect x="14" y="122" width="38" height="8" rx="2" fill="#c9a84c"/>
+          <rect x="21" y="116" width="24" height="8" rx="1" fill="#c9a84c"/>
+          <!-- stem -->
+          <rect x="28" y="88" width="10" height="30" rx="3" fill="#c9a84c"/>
+          <!-- cup body -->
+          <path d="M10,20 Q10,80 33,88 Q56,80 56,20 Z" fill="#c9a84c"/>
+          <!-- handles -->
+          <path d="M10,30 Q-4,36 -2,50 Q0,62 10,58" stroke="#c9a84c" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M56,30 Q70,36 68,50 Q66,62 56,58" stroke="#c9a84c" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- shine -->
+          <path d="M18,28 Q22,22 28,20" stroke="rgba(255,255,255,0.5)" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- stars -->
+          <text x="27" y="14" font-size="14" text-anchor="middle" fill="#c9a84c">★</text>
+        </g>
+        <!-- FIFA text -->
+        <text x="180" y="172" font-family="Barlow Condensed,sans-serif" font-weight="900" font-size="22" fill="rgba(255,255,255,0.9)" text-anchor="middle" letter-spacing="6">FIFA WORLD CUP</text>
+        <!-- Color line -->
+        <rect x="40" y="162" width="280" height="3" rx="1.5" fill="url(#lineGrad)"/>
+        <defs>
+          <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#e61d25"/>
+            <stop offset="33%" stop-color="#c9a84c"/>
+            <stop offset="66%" stop-color="#1a3a6b"/>
+            <stop offset="100%" stop-color="#3CAC3B"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- Mascots row: Maple 🦌 Zayu 🐆 Clutch 🦅 -->
+    <div class="mascots-row">
+
+      <!-- MAPLE – Canadian Moose (Canada 🇨🇦) -->
+      <div class="mascot">
+        <svg viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">
+          <!-- antlers -->
+          <path d="M28,18 Q20,8 14,4 Q16,10 18,14 Q14,10 10,10 Q14,14 17,18" stroke="#8B4513" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M52,18 Q60,8 66,4 Q64,10 62,14 Q66,10 70,10 Q66,14 63,18" stroke="#8B4513" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- head -->
+          <ellipse cx="40" cy="26" rx="16" ry="14" fill="#8B5E3C"/>
+          <!-- snout -->
+          <ellipse cx="40" cy="36" rx="9" ry="7" fill="#7A4F30"/>
+          <!-- eyes -->
+          <circle cx="33" cy="23" r="3" fill="#fff"/>
+          <circle cx="47" cy="23" r="3" fill="#fff"/>
+          <circle cx="34" cy="23" r="1.8" fill="#1a1a1a"/>
+          <circle cx="48" cy="23" r="1.8" fill="#1a1a1a"/>
+          <!-- nostrils -->
+          <circle cx="37" cy="37" r="1.5" fill="#5a3520"/>
+          <circle cx="43" cy="37" r="1.5" fill="#5a3520"/>
+          <!-- ears -->
+          <ellipse cx="26" cy="16" rx="5" ry="7" fill="#8B5E3C" transform="rotate(-15,26,16)"/>
+          <ellipse cx="54" cy="16" rx="5" ry="7" fill="#8B5E3C" transform="rotate(15,54,16)"/>
+          <!-- body - red jersey -->
+          <rect x="22" y="42" width="36" height="38" rx="10" fill="#CC0000"/>
+          <!-- maple leaf on jersey -->
+          <text x="40" y="66" font-size="16" text-anchor="middle" fill="#fff">🍁</text>
+          <!-- legs -->
+          <rect x="26" y="78" width="10" height="24" rx="4" fill="#5a3520"/>
+          <rect x="44" y="78" width="10" height="24" rx="4" fill="#5a3520"/>
+          <!-- boots -->
+          <ellipse cx="31" cy="102" rx="8" ry="4" fill="#333"/>
+          <ellipse cx="49" cy="102" rx="8" ry="4" fill="#333"/>
+          <!-- arms -->
+          <rect x="10" y="46" width="14" height="8" rx="4" fill="#CC0000" transform="rotate(20,10,46)"/>
+          <rect x="56" y="46" width="14" height="8" rx="4" fill="#CC0000" transform="rotate(-20,70,46)"/>
+        </svg>
+        <div style="text-align:center;font-size:8px;color:rgba(255,255,255,0.4);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;margin-top:-4px">MAPLE</div>
+      </div>
+
+      <!-- ZAYU – Mexican Jaguar (Mexico 🇲🇽) -->
+      <div class="mascot" style="width:72px;margin-bottom:4px">
+        <svg viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">
+          <!-- head -->
+          <ellipse cx="40" cy="28" rx="18" ry="16" fill="#D4A030"/>
+          <!-- spots on head -->
+          <circle cx="30" cy="24" r="3" fill="#8B6010" opacity="0.6"/>
+          <circle cx="50" cy="24" r="3" fill="#8B6010" opacity="0.6"/>
+          <circle cx="40" cy="18" r="2.5" fill="#8B6010" opacity="0.5"/>
+          <!-- muzzle -->
+          <ellipse cx="40" cy="37" rx="10" ry="7" fill="#e8c070"/>
+          <!-- eyes - fierce -->
+          <ellipse cx="32" cy="25" rx="4" ry="3.5" fill="#1a1a00"/>
+          <ellipse cx="48" cy="25" rx="4" ry="3.5" fill="#1a1a00"/>
+          <circle cx="32" cy="25" r="2" fill="#22aa22"/>
+          <circle cx="48" cy="25" r="2" fill="#22aa22"/>
+          <circle cx="32" cy="25" r="1" fill="#000"/>
+          <circle cx="48" cy="25" r="1" fill="#000"/>
+          <!-- nose -->
+          <path d="M37,34 Q40,32 43,34 Q40,37 37,34Z" fill="#8B4513"/>
+          <!-- whiskers -->
+          <line x1="30" y1="36" x2="14" y2="33" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+          <line x1="30" y1="38" x2="14" y2="38" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+          <line x1="50" y1="36" x2="66" y2="33" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+          <line x1="50" y1="38" x2="66" y2="38" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+          <!-- ears -->
+          <polygon points="24,16 20,6 30,14" fill="#D4A030"/>
+          <polygon points="56,16 60,6 50,14" fill="#D4A030"/>
+          <!-- body green jersey -->
+          <rect x="22" y="44" width="36" height="36" rx="10" fill="#006600"/>
+          <!-- "M" -->
+          <text x="40" y="67" font-size="16" text-anchor="middle" fill="#fff" font-weight="900" font-family="Barlow Condensed,sans-serif">MX</text>
+          <!-- spots on body -->
+          <circle cx="27" cy="50" r="2.5" fill="#004400" opacity="0.5"/>
+          <circle cx="53" cy="52" r="2.5" fill="#004400" opacity="0.5"/>
+          <!-- legs -->
+          <rect x="26" y="78" width="10" height="24" rx="4" fill="#D4A030"/>
+          <rect x="44" y="78" width="10" height="24" rx="4" fill="#D4A030"/>
+          <!-- paws -->
+          <ellipse cx="31" cy="102" rx="8" ry="4" fill="#c09020"/>
+          <ellipse cx="49" cy="102" rx="8" ry="4" fill="#c09020"/>
+          <!-- arms -->
+          <rect x="10" y="48" width="14" height="8" rx="4" fill="#006600" transform="rotate(25,10,48)"/>
+          <rect x="56" y="48" width="14" height="8" rx="4" fill="#006600" transform="rotate(-25,70,48)"/>
+          <!-- tail -->
+          <path d="M58,70 Q72,80 68,94" stroke="#D4A030" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div style="text-align:center;font-size:8px;color:rgba(255,255,255,0.4);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;margin-top:-4px">ZAYU</div>
+      </div>
+
+      <!-- CLUTCH – US Bald Eagle (USA 🇺🇸) -->
+      <div class="mascot">
+        <svg viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">
+          <!-- wings folded behind -->
+          <ellipse cx="18" cy="58" rx="14" ry="26" fill="#1a1a2e" transform="rotate(-10,18,58)"/>
+          <ellipse cx="62" cy="58" rx="14" ry="26" fill="#1a1a2e" transform="rotate(10,62,58)"/>
+          <!-- feather detail -->
+          <path d="M10,46 Q8,56 10,66 Q14,60 14,50Z" fill="#333" opacity="0.6"/>
+          <path d="M70,46 Q72,56 70,66 Q66,60 66,50Z" fill="#333" opacity="0.6"/>
+          <!-- body -->
+          <ellipse cx="40" cy="68" rx="20" ry="24" fill="#1a1a2e"/>
+          <!-- white head -->
+          <circle cx="40" cy="30" r="18" fill="#f0f0f0"/>
+          <!-- beak -->
+          <path d="M40,36 Q54,38 52,44 Q44,42 40,40Z" fill="#f0a000"/>
+          <path d="M40,38 Q52,40 50,44" stroke="#d08000" stroke-width="1" fill="none"/>
+          <!-- eyes -->
+          <circle cx="33" cy="26" r="4" fill="#fff8"/>
+          <circle cx="47" cy="26" r="4" fill="#fff8"/>
+          <circle cx="33" cy="26" r="2.5" fill="#f0a000"/>
+          <circle cx="47" cy="26" r="2.5" fill="#f0a000"/>
+          <circle cx="33" cy="26" r="1.2" fill="#000"/>
+          <circle cx="47" cy="26" r="1.2" fill="#000"/>
+          <!-- US jersey - blue+red -->
+          <rect x="24" y="48" width="32" height="36" rx="8" fill="#002868"/>
+          <!-- stripes -->
+          <rect x="24" y="60" width="32" height="6" rx="0" fill="#BF0A30" opacity="0.8"/>
+          <rect x="24" y="72" width="32" height="6" rx="0" fill="#BF0A30" opacity="0.8"/>
+          <!-- stars -->
+          <text x="40" y="58" font-size="8" text-anchor="middle" fill="#fff">★ ★ ★</text>
+          <!-- talons/feet -->
+          <path d="M30,84 Q26,96 24,102 M30,84 Q30,96 30,102 M30,84 Q34,96 36,102" stroke="#f0a000" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M50,84 Q46,96 44,102 M50,84 Q50,96 50,102 M50,84 Q54,96 56,102" stroke="#f0a000" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div style="text-align:center;font-size:8px;color:rgba(255,255,255,0.4);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;margin-top:-4px">CLUTCH</div>
+      </div>
+
+    </div><!-- /mascots -->
+
+    <div class="tournament-label">FIFA WORLD CUP 2026™ · USA · CANADA · MÉXICO</div>
+    <div class="copa-title">3RA COPA CANTV</div>
+    <div class="copa-sub">SORTEO DE SELECCIONES</div>
+    <div class="we-are-26">WE ARE 26</div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-labels">
+        <span class="progress-label">Revelados</span>
+        <span class="progress-count" id="prog-text">0 / 16</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-row">
+      <button class="btn-primary" id="btn-all">⚡ REVELAR TODOS</button>
+      <button class="btn-secondary" id="btn-reset">🔀 NUEVO SORTEO</button>
+    </div>
+    <div class="valid-note">✅ Garantizado: ningún jugador tiene 2 equipos del mismo grupo</div>
+
+  </div>
+</div>
+
+<!-- ══════════ LEGEND ══════════ -->
+<div id="legend">
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#c9a84c"></div>
+    <span class="legend-text"><b style="color:#c9a84c">A · TOP</b> — Candidatos a ganar la Copa</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#b0bec5"></div>
+    <span class="legend-text"><b style="color:#b0bec5">B · MED</b> — Pueden llegar a octavos</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#a0522d"></div>
+    <span class="legend-text"><b style="color:#a0522d">C · LOW</b> — Eliminados en grupos/octavos</span>
+  </div>
+</div>
+
+<!-- ══════════ CARDS GRID ══════════ -->
+<div id="grid"></div>
+
+<!-- ══════════ SUMMARY TABLE ══════════ -->
+<div id="summary">
+  <div class="summary-box">
+    <div class="summary-header">
+      <span>📋</span>
+      <span>TABLA RESUMEN COMPLETA</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Participante</th>
+            <th>🏆 Nivel A</th><th>⚡ Nivel B</th><th>🌱 Nivel C</th>
+          </tr>
+        </thead>
+        <tbody id="summary-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ HOST STRIP ══════════ -->
+<div class="host-strip">
+  <span>🇺🇸 UNITED STATES</span>
+  <span>🇨🇦 CANADA</span>
+  <span>🇲🇽 MÉXICO</span>
+  <span>JUN 11 – JUL 19, 2026</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════
+const NIVEL_A = [
+  { nombre:"🇦🇷 Argentina",    grupo:"J", razon:"Campeón vigente, Messi, élite mundial" },
+  { nombre:"🇫🇷 Francia",      grupo:"I", razon:"Final 2022, plantilla de estrellas" },
+  { nombre:"🇪🇸 España",       grupo:"H", razon:"#1 FIFA, Euro 2024, juego dominante" },
+  { nombre:"🇧🇷 Brasil",       grupo:"C", razon:"5 copas, eliminatorias arrolladoras" },
+  { nombre:"🇩🇪 Alemania",     grupo:"E", razon:"4 copas, resurgimiento 2024-25" },
+  { nombre:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra",  grupo:"L", razon:"Final Euro 2024, plantilla top" },
+  { nombre:"🇵🇹 Portugal",     grupo:"K", razon:"Ronaldo, élite UEFA clasificatorias" },
+  { nombre:"🇳🇱 Países Bajos", grupo:"F", razon:"Semi 2022, Van Dijk, Gakpo en forma" },
+  { nombre:"🇲🇦 Marruecos",    grupo:"C", razon:"4to lugar 2022, mejor selección África" },
+  { nombre:"🇧🇪 Bélgica",      grupo:"G", razon:"Generación dorada aún competitiva" },
+  { nombre:"🇺🇾 Uruguay",      grupo:"H", razon:"Histórico, fuerte en eliminatorias" },
+  { nombre:"🇯🇵 Japón",        grupo:"F", razon:"1ro AFC, venció Alemania y España" },
+  { nombre:"🇨🇴 Colombia",     grupo:"K", razon:"Final Copa América 2024, sólido" },
+  { nombre:"🇺🇸 EE.UU.",       grupo:"D", razon:"Local, en ascenso, MLS + Europa" },
+  { nombre:"🇭🇷 Croacia",      grupo:"L", razon:"Sub-campeón 2018, semi 2022" },
+  { nombre:"🇸🇳 Senegal",      grupo:"I", razon:"Campeón CAN 2021, potencia África" },
+];
+const NIVEL_B = [
+  { nombre:"🇲🇽 México",         grupo:"A", razon:"Local, histórico, cuartos recurrente" },
+  { nombre:"🇦🇹 Austria",         grupo:"J", razon:"Sólido UEFA Nations, buen nivel 2024" },
+  { nombre:"🇨🇭 Suiza",           grupo:"B", razon:"Cuartos 2022, organizada y disciplinada" },
+  { nombre:"🇹🇷 Turquía",         grupo:"D", razon:"3ro Euro 2024, renacimiento europeo" },
+  { nombre:"🇪🇨 Ecuador",         grupo:"E", razon:"Siempre clasifica, fase grupos sólida" },
+  { nombre:"🇦🇺 Australia",       grupo:"D", razon:"Cuartos 2022, Socceroos creciendo" },
+  { nombre:"🇰🇷 Corea del Sur",   grupo:"A", razon:"4to lugar 2002, regular en mundiales" },
+  { nombre:"🇿🇦 Sudáfrica",       grupo:"A", razon:"AFCON competitivo, debut grato 2010" },
+  { nombre:"🇺🇿 Uzbekistán",      grupo:"K", razon:"Debut, fuerte AFC, sorpresa potencial" },
+  { nombre:"🇳🇴 Noruega",         grupo:"I", razon:"Haaland, potencial ofensivo brutal" },
+  { nombre:"🇸🇪 Suecia",          grupo:"F", razon:"Semifinal 2018, sólido históricamente" },
+  { nombre:"🇪🇬 Egipto",          grupo:"G", razon:"Mohamed Salah, finalista AFCON" },
+  { nombre:"🇵🇾 Paraguay",        grupo:"D", razon:"Regular CONMEBOL, cuartos 2010" },
+  { nombre:"🇮🇷 Irán",            grupo:"G", razon:"Mejor Asia, resultados vs Europa" },
+  { nombre:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia",      grupo:"C", razon:"Clasificó sólido UEFA, regreso fuerte" },
+  { nombre:"🇨🇦 Canadá",          grupo:"B", razon:"Local, mejor generación histórica" },
+];
+const NIVEL_C = [
+  { nombre:"🇧🇦 Bosnia",          grupo:"B", razon:"Debut 2014, sin impacto posterior" },
+  { nombre:"🇶🇦 Qatar",           grupo:"B", razon:"Peor debut 2022, nivel cuestionado" },
+  { nombre:"🇬🇭 Ghana",           grupo:"L", razon:"Cuartos 2010, en declive reciente" },
+  { nombre:"🇵🇦 Panamá",          grupo:"L", razon:"2da Copa, eliminado en grupos 2018" },
+  { nombre:"🇩🇿 Argelia",         grupo:"J", razon:"AFCON 2019, eliminatorias difíciles" },
+  { nombre:"🇨🇮 Costa de Marfil", grupo:"E", razon:"AFCON 2023, mundiales irregulares" },
+  { nombre:"🇹🇳 Túnez",           grupo:"F", razon:"7 mundiales, nunca superó grupos" },
+  { nombre:"🇸🇦 Arabia Saudita",  grupo:"H", razon:"Venció Argentina 2022, muy irregular" },
+  { nombre:"🇨🇿 Rep. Checa",      grupo:"A", razon:"Semi Eurocopa 2004, nivel medio hoy" },
+  { nombre:"🇨🇩 Congo DR",        grupo:"K", razon:"Debut, AFCON fuerte pero nuevo aquí" },
+  { nombre:"🇳🇿 Nueva Zelanda",   grupo:"G", razon:"OFC, nivel bajo vs élite mundial" },
+  { nombre:"🇯🇴 Jordania",        grupo:"J", razon:"Debut, final Copa Asia 2023" },
+  { nombre:"🇭🇹 Haití",           grupo:"C", razon:"2da Copa, CONCACAF menor nivel" },
+  { nombre:"🇮🇶 Irak",            grupo:"I", razon:"Copa Árabe 2021, debut en Mundial" },
+  { nombre:"🇨🇻 Cabo Verde",      grupo:"H", razon:"AFCON QF 2023, debut en Mundial" },
+  { nombre:"🇨🇼 Curazao",         grupo:"E", razon:"Debut, mejor CONCACAF pequeño" },
+];
+const PARTICIPANTES = [
+  { num:1,  nombre:"ELIO",     user:"FCBLegends_Vzla", plat:"PS5" },
+  { num:2,  nombre:"ROGER",    user:"siempreyowin",    plat:"XBOX" },
+  { num:3,  nombre:"MATEO",    user:"MrGuillO1927",    plat:"XBOX" },
+  { num:4,  nombre:"JOSSUA",   user:"JossuaElCrack",   plat:"PS5" },
+  { num:5,  nombre:"JAVIER",   user:"Javi-257",        plat:"PC" },
+  { num:6,  nombre:"RAFAEL",   user:"karmados",        plat:"PS5" },
+  { num:7,  nombre:"REIBER",   user:"Slyadrie7",       plat:"PS5" },
+  { num:8,  nombre:"JESUS",    user:"jesus20124125",   plat:"XBOX" },
+  { num:9,  nombre:"EDUARDO",  user:"YOnL3nn0n",       plat:"PS5" },
+  { num:10, nombre:"JABY",     user:"Jabyher225",      plat:"PS5" },
+  { num:11, nombre:"BENJAMIN", user:"Zentrakk",        plat:"PS5" },
+  { num:12, nombre:"MATÍAS",   user:"Mati152014",      plat:"PS5" },
+  { num:13, nombre:"ADRIÁN",   user:"wasapeo0609",     plat:"PS5" },
+  { num:14, nombre:"CHEITO",   user:"jocelpepe",       plat:"XBOX" },
+  { num:15, nombre:"CIRO",     user:"Ciro_26A",        plat:"PS5" },
+  { num:16, nombre:"GABRIEL",  user:"Albornozg14",     plat:"PS5" },
+];
+
+// ═══════════════════════════════════════════════
+//  ALGORITHM
+// ═══════════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function generateSorteo() {
+  for (let t = 0; t < 50000; t++) {
+    const sA = shuffle(NIVEL_A), sB = shuffle(NIVEL_B), sC = shuffle(NIVEL_C);
+    let ok = true;
+    for (let i = 0; i < 16; i++) {
+      if (new Set([sA[i].grupo, sB[i].grupo, sC[i].grupo]).size < 3) { ok = false; break; }
+    }
+    if (ok) return PARTICIPANTES.map((p, i) => ({ ...p, selA: sA[i], selB: sB[i], selC: sC[i] }));
+  }
+  return PARTICIPANTES.map((p, i) => ({ ...p, selA: NIVEL_A[i], selB: NIVEL_B[i], selC: NIVEL_C[i] }));
+}
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let sorteo = generateSorteo();
+let revealed = new Array(16).fill(false);
+
+function platClass(p) {
+  if (p === 'PS5') return 'plat-ps5';
+  if (p === 'XBOX') return 'plat-xbox';
+  return 'plat-pc';
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════
+function render() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  sorteo.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'card' + (revealed[i] ? ' revealed' : '');
+    card.id = 'card-' + i;
+    card.setAttribute('data-idx', i);
+
+    const platLabel = p.plat;
+    const innerHeader = `
+      <div class="card-header">
+        <div class="card-num-wrap">
+          <div class="card-num">${p.num}</div>
+          <div>
+            <div class="card-name">${p.nombre}</div>
+            <div class="card-user">${p.user}</div>
+          </div>
+        </div>
+        <span class="plat-badge ${platClass(p.plat)}">${platLabel}</span>
+      </div>`;
+
+    let innerBody;
+    if (!revealed[i]) {
+      innerBody = `<div class="card-body"><div class="card-hidden">
+        <div class="card-hidden-icon">🎰</div>
+        <div class="card-hidden-text">Toca para revelar</div>
+      </div></div>`;
+    } else {
+      innerBody = `<div class="card-body"><div class="sel-list">
+        <div class="sel-row tier-a">
+          <span class="sel-badge badge-a">A · TOP</span>
+          <div class="sel-info">
+            <div class="sel-name">${p.selA.nombre}</div>
+            <div class="sel-detail">Grupo ${p.selA.grupo} · ${p.selA.razon}</div>
+          </div>
+        </div>
+        <div class="sel-row tier-b">
+          <span class="sel-badge badge-b">B · MED</span>
+          <div class="sel-info">
+            <div class="sel-name">${p.selB.nombre}</div>
+            <div class="sel-detail">Grupo ${p.selB.grupo} · ${p.selB.razon}</div>
+          </div>
+        </div>
+        <div class="sel-row tier-c">
+          <span class="sel-badge badge-c">C · LOW</span>
+          <div class="sel-info">
+            <div class="sel-name">${p.selC.nombre}</div>
+            <div class="sel-detail">Grupo ${p.selC.grupo} · ${p.selC.razon}</div>
+          </div>
+        </div>
+      </div></div>`;
+    }
+    card.innerHTML = innerHeader + innerBody;
+    grid.appendChild(card);
+  });
+
+  updateProgress();
+  updateSummary();
+}
+
+function updateProgress() {
+  const count = revealed.filter(Boolean).length;
+  document.getElementById('prog-text').textContent = count + ' / 16';
+  document.getElementById('prog-fill').style.width = (count / 16 * 100) + '%';
+  document.getElementById('btn-all').disabled = count === 16;
+  if (count === 16) document.getElementById('summary').classList.add('show');
+}
+
+function updateSummary() {
+  const tbody = document.getElementById('summary-body');
+  tbody.innerHTML = sorteo.map((p, i) => revealed[i] ? `
+    <tr>
+      <td class="td-num">${p.num}</td>
+      <td><span class="td-name">${p.nombre}</span><span class="td-user">${p.user}</span></td>
+      <td class="td-sel-a">${p.selA.nombre}<span class="td-grp">Gr.${p.selA.grupo}</span></td>
+      <td class="td-sel-b">${p.selB.nombre}<span class="td-grp">Gr.${p.selB.grupo}</span></td>
+      <td class="td-sel-c">${p.selC.nombre}<span class="td-grp">Gr.${p.selC.grupo}</span></td>
+    </tr>` : '').join('');
+}
+
+// ═══════════════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════════════
+function revealOne(i) {
+  revealed[i] = true;
+  render();
+  // scroll card into view
+  setTimeout(() => {
+    const el = document.getElementById('card-' + i);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+function revealAll() {
+  revealed = new Array(16).fill(true);
+  render();
+  setTimeout(() => {
+    document.getElementById('summary').scrollIntoView({ behavior: 'smooth' });
+  }, 200);
+}
+
+function resetSorteo() {
+  const btn = document.getElementById('btn-reset');
+  btn.classList.add('spinning');
+  setTimeout(() => {
+    sorteo = generateSorteo();
+    revealed = new Array(16).fill(false);
+    document.getElementById('summary').classList.remove('show');
+    render();
+    btn.classList.remove('spinning');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 500);
+}
+
+// ═══════════════════════════════════════════════
+//  INIT — event delegation (works in all WebViews)
+// ═══════════════════════════════════════════════
+function handleCardInteraction(e) {
+  // find the card element
+  let el = e.target;
+  while (el && !el.hasAttribute('data-idx')) el = el.parentElement;
+  if (!el) return;
+  const i = parseInt(el.getAttribute('data-idx'), 10);
+  if (!revealed[i]) {
+    if (e.type === 'touchend') e.preventDefault(); // prevent ghost click
+    revealOne(i);
+  }
+}
+
+const grid = document.getElementById('grid');
+grid.addEventListener('click',    handleCardInteraction);
+grid.addEventListener('touchend', handleCardInteraction, { passive: false });
+
+document.getElementById('btn-all').addEventListener('click',    revealAll);
+document.getElementById('btn-all').addEventListener('touchend', function(e){ e.preventDefault(); revealAll(); });
+document.getElementById('btn-reset').addEventListener('click',    resetSorteo);
+document.getElementById('btn-reset').addEventListener('touchend', function(e){ e.preventDefault(); resetSorteo(); });
+
+render();
+</script>
+</body>
+</html>
