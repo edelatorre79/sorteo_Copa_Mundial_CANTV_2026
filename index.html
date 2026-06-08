@@ -636,6 +636,23 @@ const PARTICIPANTES = [
 
 // ═══════════════════════════════════════════════
 //  ALGORITHM
+//
+//  NIVEL_A y NIVEL_B ya están ordenados de mejor
+//  a peor (índice 0 = el mejor).
+//
+//  Reglas:
+//  1) Sortear aleatoriamente los 16 puestos → cada
+//     participante recibe una posición de ranking A
+//     (rank 0..15). Quien saca rank 0 (mejor A)
+//     recibe rank 15 de B (peor B), rank 1→B14, etc.
+//     Si hay conflicto de grupo entre A y B del
+//     participante, el B "baja" al siguiente disponible
+//     en su dirección (más abajo en el ranking B para
+//     los top A, más arriba para los bottom A).
+//  2) C se asigna aleatoriamente e independiente,
+//     solo respetando que no repita grupo con A ni B.
+//     Si el candidato C tiene conflicto, ir al
+//     siguiente C disponible en orden aleatorio.
 // ═══════════════════════════════════════════════
 function shuffle(arr) {
   const a = [...arr];
@@ -645,16 +662,95 @@ function shuffle(arr) {
   }
   return a;
 }
+
 function generateSorteo() {
-  for (let t = 0; t < 50000; t++) {
-    const sA = shuffle(NIVEL_A), sB = shuffle(NIVEL_B), sC = shuffle(NIVEL_C);
-    let ok = true;
-    for (let i = 0; i < 16; i++) {
-      if (new Set([sA[i].grupo, sB[i].grupo, sC[i].grupo]).size < 3) { ok = false; break; }
+  // Step 1: assign random A ranks to the 16 players
+  const aRanks = shuffle([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+  // Each player[i] gets NIVEL_A[ aRanks[i] ]
+  const assignedA = aRanks.map(r => NIVEL_A[r]);
+
+  // Step 2: assign B inversely to A rank, resolving group conflicts
+  // The "ideal" B rank for a player with A rank r is (15 - r).
+  // If conflict, search outward: for high-A (r<8) go higher B rank index (worse),
+  // for low-A (r>=8) go lower B rank index (better).
+  const bUsed = new Array(16).fill(false);
+  const assignedB = new Array(16);
+
+  for (let i = 0; i < 16; i++) {
+    const aRank = aRanks[i];
+    const groupA = assignedA[i].grupo;
+    const idealB = 15 - aRank; // inverse
+    // direction: top A (rank 0-7) → if conflict go higher index (worse B)
+    //            bottom A (rank 8-15) → if conflict go lower index (better B)
+    const dir = aRank < 8 ? 1 : -1;
+
+    // Try idealB first, then walk in dir, then opposite
+    let found = false;
+    // Walk in preferred direction from idealB
+    for (let step = 0; step < 16 && !found; step++) {
+      const idx = idealB + step * dir;
+      if (idx >= 0 && idx < 16 && !bUsed[idx] && NIVEL_B[idx].grupo !== groupA) {
+        assignedB[i] = NIVEL_B[idx];
+        bUsed[idx] = true;
+        found = true;
+      }
     }
-    if (ok) return PARTICIPANTES.map((p, i) => ({ ...p, selA: sA[i], selB: sB[i], selC: sC[i] }));
+    // If still not found, walk opposite direction
+    for (let step = 1; step < 16 && !found; step++) {
+      const idx = idealB - step * dir;
+      if (idx >= 0 && idx < 16 && !bUsed[idx] && NIVEL_B[idx].grupo !== groupA) {
+        assignedB[i] = NIVEL_B[idx];
+        bUsed[idx] = true;
+        found = true;
+      }
+    }
+    // Last resort: any unused B
+    if (!found) {
+      for (let idx = 0; idx < 16 && !found; idx++) {
+        if (!bUsed[idx]) {
+          assignedB[i] = NIVEL_B[idx];
+          bUsed[idx] = true;
+          found = true;
+        }
+      }
+    }
   }
-  return PARTICIPANTES.map((p, i) => ({ ...p, selA: NIVEL_A[i], selB: NIVEL_B[i], selC: NIVEL_C[i] }));
+
+  // Step 3: assign C randomly, avoiding group conflict with A and B
+  const cShuffled = shuffle([...NIVEL_C]);
+  const cUsed = new Array(16).fill(false);
+  const assignedC = new Array(16);
+
+  for (let i = 0; i < 16; i++) {
+    const forbidden = new Set([assignedA[i].grupo, assignedB[i].grupo]);
+    // Find first available C in shuffled order with no group conflict
+    let found = false;
+    for (let j = 0; j < 16 && !found; j++) {
+      if (!cUsed[j] && !forbidden.has(cShuffled[j].grupo)) {
+        assignedC[i] = cShuffled[j];
+        cUsed[j] = true;
+        found = true;
+      }
+    }
+    // Last resort: any unused C
+    if (!found) {
+      for (let j = 0; j < 16 && !found; j++) {
+        if (!cUsed[j]) {
+          assignedC[i] = cShuffled[j];
+          cUsed[j] = true;
+          found = true;
+        }
+      }
+    }
+  }
+
+  return PARTICIPANTES.map((p, i) => ({
+    ...p,
+    selA: assignedA[i],
+    selB: assignedB[i],
+    selC: assignedC[i],
+    aRank: aRanks[i], // store for display
+  }));
 }
 
 // ═══════════════════════════════════════════════
